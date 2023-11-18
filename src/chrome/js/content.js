@@ -18,6 +18,12 @@ async function wizard() {
 }
 
 function initObs() {
+    if (!window.MutationObserver) {
+        alert(
+            "This extension requires MutationObserver. Please update your browser."
+        );
+        return;
+    }
     console.log(
         "%cInitializing MutationObserver",
         "color: green; font-size: 1.5em; background: black",
