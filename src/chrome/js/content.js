@@ -30,7 +30,7 @@ function initObs() {
         document.readyState
     );
     // Select the node that will be observed for mutations
-    const targetNode = document.querySelector("#primary-inner > #player");
+    const targetNode = document.body;
     if (targetNode === null) {
         setTimeout(() => {
             initObs();
@@ -38,18 +38,22 @@ function initObs() {
         return;
     }
     targetNode.setAttribute("wizard", "true");
-    const adContainer = targetNode.querySelector(".video-ads.ytp-ad-module");
+    const adContainer = document.body.querySelector(".video-ads.ytp-ad-module");
 
+    console.log(
+        "🚀🚀🚀🚀🚀🚀content.js:44 adContainer?.childNodes.length > 0:",
+        adContainer?.childNodes.length > 0
+    );
     if (adContainer?.childNodes.length > 0) {
         console.log(
             "%cAD DETECTED",
             "color: red; font-size: 1.5em; background: black"
         );
 
-        if (hasSkipLock(targetNode)) {
+        if (hasSkipLock(document.body)) {
             goToEnd();
             skipAd();
-        } else if (hasSkipButton(targetNode)) {
+        } else if (hasSkipButton(document.body)) {
             skipAd();
         } else {
             goToEnd();
@@ -65,16 +69,20 @@ function initObs() {
     const callback = (mutationList, observer) => {
         for (const mutation of mutationList) {
             if (mutation.type === "childList") {
+                console.log(
+                    "🚀🚀🚀🚀🚀🚀content.js:44 adContainer?.childNodes.length > 0:",
+                    adContainer?.childNodes.length > 0
+                );
                 if (adContainer?.childNodes.length > 0) {
                     console.log(
                         "%cAD DETECTED",
                         "color: red; font-size: 1.5em; background: black"
                     );
 
-                    if (hasSkipLock(targetNode)) {
+                    if (hasSkipLock(document.body)) {
                         goToEnd();
                         skipAd();
-                    } else if (hasSkipButton(targetNode)) {
+                    } else if (hasSkipButton(document.body)) {
                         skipAd();
                     } else {
                         goToEnd();
@@ -106,7 +114,7 @@ function initObs() {
         return !!target.querySelector(".ytp-ad-skip-button-slot");
     }
     function goToEnd() {
-        const video = document.querySelector(".video-stream");
+        const video = document.body.querySelector(".video-stream");
         if (video) {
             video.currentTime = video.duration - 0.1;
             video.muted = true;
@@ -114,7 +122,7 @@ function initObs() {
         }
     }
     function skipAd() {
-        const skipButtonWrapper = document.querySelector(
+        const skipButtonWrapper = document.body.querySelector(
             ".ytp-ad-skip-button-slot"
         );
 
