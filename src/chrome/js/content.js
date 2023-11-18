@@ -5,14 +5,12 @@ async function wizard() {
     );
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function () {
-            console.log("<-DOMContentLoaded->");
             initObs();
         });
     } else if (
         document.readyState === "complete" ||
         document.readyState === "interactive"
     ) {
-        console.log("<-COMPLETE->");
         initObs();
     } else return;
 }
@@ -40,11 +38,7 @@ function initObs() {
     targetNode.setAttribute("wizard", "true");
     const adContainer = document.body.querySelector(".video-ads.ytp-ad-module");
 
-    console.log(
-        "🚀🚀🚀🚀🚀🚀content.js:44 adContainer?.childNodes.length > 0:",
-        adContainer?.childNodes.length > 0
-    );
-    if (adContainer?.childNodes.length > 0) {
+    if (adContainer?.childElementCount > 0) {
         console.log(
             "%cAD DETECTED",
             "color: red; font-size: 1.5em; background: black"
@@ -69,11 +63,7 @@ function initObs() {
     const callback = (mutationList, observer) => {
         for (const mutation of mutationList) {
             if (mutation.type === "childList") {
-                console.log(
-                    "🚀🚀🚀🚀🚀🚀content.js:44 adContainer?.childNodes.length > 0:",
-                    adContainer?.childNodes.length > 0
-                );
-                if (adContainer?.childNodes.length > 0) {
+                if (adContainer?.childElementCount > 0) {
                     console.log(
                         "%cAD DETECTED",
                         "color: red; font-size: 1.5em; background: black"
