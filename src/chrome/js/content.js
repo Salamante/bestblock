@@ -40,6 +40,22 @@ function initObs() {
     targetNode.setAttribute("wizard", "true");
     const adContainer = targetNode.querySelector(".video-ads.ytp-ad-module");
 
+    if (adContainer?.childNodes.length > 0) {
+        console.log(
+            "%cAD DETECTED",
+            "color: red; font-size: 1.5em; background: black"
+        );
+
+        if (hasSkipLock(targetNode)) {
+            goToEnd();
+            skipAd();
+        } else if (hasSkipButton(targetNode)) {
+            skipAd();
+        } else {
+            goToEnd();
+        }
+    }
+
     console.log("🚀 ~ file: content.js:19 ~ initObs ~ targetNode:", targetNode);
 
     // Options for the observer (which mutations to observe)
