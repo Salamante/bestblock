@@ -1,8 +1,4 @@
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    console.log(
-        "🚀 ~ file: background.js:6 ~ chrome.tabs.onUpdated.addListener ~ changeInfo.status:",
-        changeInfo.status
-    );
     if (
         changeInfo.status === "complete" &&
         /^https:\/\/www\.youtube\.com\/watch\?/.test(tab.url)

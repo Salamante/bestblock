@@ -1,8 +1,4 @@
 async function wizard() {
-    console.log(
-        "%cRunning wizard!",
-        "color: orange; font-size: 1.5em; font-weight: bold; background: black"
-    );
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function () {
             initObs();
@@ -16,18 +12,6 @@ async function wizard() {
 }
 
 function initObs() {
-    if (!window.MutationObserver) {
-        alert(
-            "This extension requires MutationObserver. Please update your browser."
-        );
-        return;
-    }
-    console.log(
-        "%cInitializing MutationObserver",
-        "color: green; font-size: 1.5em; background: black",
-        document.readyState
-    );
-    // Select the node that will be observed for mutations
     const targetNode = document.body;
     if (targetNode === null) {
         setTimeout(() => {
@@ -38,66 +22,35 @@ function initObs() {
     targetNode.setAttribute("wizard", "true");
     const adContainer = document.body.querySelector(".video-ads.ytp-ad-module");
 
-    if (adContainer?.childElementCount > 0) {
-        console.log(
-            "%cAD DETECTED",
-            "color: red; font-size: 1.5em; background: black"
+    mainSkipController();
+
+    if (!window.MutationObserver) {
+        alert(
+            "This extension will not run operate optimally on your browser version. Please update your browser."
         );
 
-        if (hasSkipLock(document.body)) {
-            goToEnd();
-            skipAd();
-        } else if (hasSkipButton(document.body)) {
-            skipAd();
-        } else {
-            goToEnd();
+        if (!targetNode.hasAttribute("no-obs")) {
+            const timeout = setTimeout(() => {
+                initObs();
+            }, 50);
+            targetNode.setAttribute("no-obs", "true");
         }
+        return;
     }
 
-    console.log("🚀 ~ file: content.js:19 ~ initObs ~ targetNode:", targetNode);
-
-    // Options for the observer (which mutations to observe)
     const config = { attributes: true, childList: true, subtree: true };
-
-    // Callback function to execute when mutations are observed
     const callback = (mutationList, observer) => {
         for (const mutation of mutationList) {
             if (mutation.type === "childList") {
-                if (adContainer?.childElementCount > 0) {
-                    console.log(
-                        "%cAD DETECTED",
-                        "color: red; font-size: 1.5em; background: black"
-                    );
-
-                    if (hasSkipLock(document.body)) {
-                        goToEnd();
-                        skipAd();
-                    } else if (hasSkipButton(document.body)) {
-                        skipAd();
-                    } else {
-                        goToEnd();
-                    }
-                }
-                // console.log("A child node has been added or removed.");
-            } else if (mutation.type === "attributes") {
-                // console.log(
-                //     `The ${mutation.attributeName} attribute was modified.`
-                // );
+                mainSkipController();
             }
         }
     };
 
-    // Create an observer instance linked to the callback function
     const observer = new MutationObserver(callback);
-
-    // Start observing the target node for configured mutations
     observer.observe(targetNode, config);
 
     function hasSkipLock(target) {
-        console.log(
-            "%cHas Skip Lock",
-            "color: red; font-size: 1.5em; background: black"
-        );
         return !target.querySelector(".ytp-ad-skip-button-slot");
     }
     function hasSkipButton(target) {
@@ -116,13 +69,20 @@ function initObs() {
             ".ytp-ad-skip-button-slot"
         );
 
-        console.log(
-            "%cSkip Button Element:",
-            "color: red; font-size: 1.5em; background: black",
-            skipButtonWrapper
-        );
         if (skipButtonWrapper) {
             skipButtonWrapper.querySelector("button").click();
+        }
+    }
+    function mainSkipController() {
+        if (adContainer?.childElementCount > 0) {
+            if (hasSkipLock(document.body)) {
+                goToEnd();
+                skipAd();
+            } else if (hasSkipButton(document.body)) {
+                skipAd();
+            } else {
+                goToEnd();
+            }
         }
     }
 }
