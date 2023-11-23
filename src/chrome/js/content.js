@@ -3,15 +3,15 @@ async function wizard() {
         document.addEventListener("DOMContentLoaded", function () {
             initObs();
         });
-    } else if (
-        document.readyState === "complete" ||
-        document.readyState === "interactive"
-    ) {
+    } else if (document.readyState === "complete") {
         initObs();
     } else return;
 }
 
 function initObs() {
+    let initialRunCount = 0;
+    const classList =
+        "html5-video-player ytp-transparent ytp-exp-bottom-control-flexbox ytp-exp-ppp-update ytp-bigboards ytp-hide-info-bar ytp-large-width-mode ytp-fine-scrubbing-exp ad-created ad-showing ad-interrupting ytp-fit-cover-video paused-mode";
     const targetNode = document.body;
     if (targetNode === null) {
         setTimeout(() => {
@@ -20,9 +20,8 @@ function initObs() {
         return;
     }
     targetNode.setAttribute("wizard", "true");
-    const adContainer = document.body.querySelector(".video-ads.ytp-ad-module");
 
-    mainSkipController();
+    initialSkipController();
 
     if (!window.MutationObserver) {
         alert(
@@ -58,10 +57,14 @@ function initObs() {
     }
     function goToEnd() {
         const video = document.body.querySelector(".video-stream");
-        if (video) {
+        if (video && !Number.isNaN(video.duration)) {
             video.currentTime = video.duration - 0.1;
             video.muted = true;
             if (video.paused) video.play();
+        } else {
+            setTimeout(() => {
+                goToEnd();
+            }, 100);
         }
     }
     function skipAd() {
@@ -74,6 +77,9 @@ function initObs() {
         }
     }
     function mainSkipController() {
+        const adContainer = document.body.querySelector(
+            ".video-ads.ytp-ad-module"
+        );
         if (adContainer?.childElementCount > 0) {
             if (hasSkipLock(document.body)) {
                 goToEnd();
@@ -81,8 +87,20 @@ function initObs() {
             } else if (hasSkipButton(document.body)) {
                 skipAd();
             } else {
-                goToEnd();
+                setTimeout(() => {
+                    mainSkipController();
+                }, 50);
             }
+        }
+    }
+
+    function initialSkipController() {
+        if (initialRunCount < 100) {
+            setTimeout(() => {
+                mainSkipController();
+
+                initialSkipController();
+            }, 200);
         }
     }
 }
